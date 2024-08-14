@@ -21,22 +21,28 @@ def imprimir_menu(menu):
 def buscar_producto(id, menu):
     for item in menu:
         if item ["id"]==(id):
-            return menu
-        print ("Producto no encontrado")
-        input("Presione ENTER para volver al menu")
-        return None
+            return True
+        else:
+            return False
 
-def agregar_al_carrito (id,cantidad,precio_tot):
-    if id == 1:
-            carrito.append({"id": 1,"nombre":"arroz","precio":50,"cantidad":cantidad,"precio total":precio_tot})
-    elif id == 2:
-            carrito.append({"id": 2,"nombre":"habichuelas","precio":80,"cantidad":cantidad,"precio total":precio_tot})
-    elif id == 3:
-            carrito.append({"id": 3,"nombre":"aceite","precio":300,"cantidad":cantidad,"precio total":precio_tot})
-    elif id == 4:
-            carrito.append({"id": 4,"nombre":"pollo","precio":85,"cantidad":cantidad,"precio total":precio_tot})
-    elif id == 5:
-            carrito.append({"id": 5,"nombre":"lechuga","precio":80,"cantidad":cantidad,"precio total":precio_tot})
+def agregar_al_carrito (id,cantidad):
+    ag=0
+    for item in carrito:
+        if item['id'] == id:
+            item['cantidad'] += cantidad
+            item['precio total'] = item['precio'] * item['cantidad']
+            ag=1
+    if ag!=1:
+        if  id == 1:
+            carrito.append({"id": 1,"nombre":"arroz","precio":50,"cantidad":cantidad,"precio total":cantidad*50})
+        elif id == 2:
+            carrito.append({"id": 2,"nombre":"habichuelas","precio":80,"cantidad":cantidad,"precio total":cantidad*80})
+        elif id == 3:
+            carrito.append({"id": 3,"nombre":"aceite","precio":300,"cantidad":cantidad,"precio total":cantidad*300})
+        elif id == 4:
+            carrito.append({"id": 4,"nombre":"pollo","precio":85,"cantidad":cantidad,"precio total":cantidad*85})
+        elif id == 5:
+            carrito.append({"id": 5,"nombre":"lechuga","precio":80,"cantidad":cantidad,"precio total":cantidad*80})
 
 def imprimirfactura(carrito):
     tamid=1
@@ -72,92 +78,28 @@ def imprimirfactura(carrito):
         subtotal += item['precio'] * item['cantidad']
     impuestos= subtotal*0.18
     total=subtotal+impuestos
-    print ((" "*21)+"Subtotal"+(" "*2),subtotal,"RD$")
-    print ((" "*21)+"Impuesto"+(" "*2),impuestos,"RD$")
-    print ((" "*21)+"Total"+(" "*5),total,"RD$")
+    print ((" "*25)+"Subtotal"+(" "*2),subtotal,"RD$")
+    print ((" "*25)+"Impuesto"+(" "*2),impuestos,"RD$")
+    print ((" "*25)+"Total"+(" "*5),total,"RD$")
 
 def main(menu):
-    opc=" "
-    while opc!="S":
+    while True:
         os.system("cls")
         imprimir_menu(menu)
         opc=input("¿Que producto desea agregar? ")
-        if opc=="1":
-            id=1
-            cantidad = int(input("Cuantas lbs de arroz quieres: "))
+        id = int(opc)
+        buscar_producto(id, menu)
+        if buscar_producto:
+            cantidad = int(input("¿Cuantas lbs quieres? "))
             if cantidad <=0:
                 input ("No se puede ingresar una cantidad negativa, ni tampoco 0. Presione enter para volver al menu: ")
             else:
-                precio_tot = 50 * cantidad
-                agregar_al_carrito (id,cantidad,precio_tot)
-                vol_agregar = input("¿Quieres ordenar algo mas? ")
-                if vol_agregar == "si":
-                    main(menu)
-                elif vol_agregar != "si":
-                    opc="S"
+                agregar_al_carrito(id, cantidad)
+                volver = input("¿Deseas añadir algo más?: ")
+                if volver != "si":
                     imprimirfactura(carrito)
-                    print ("Adios")
-        elif opc=="2":
-            id=2
-            cantidad = int(input("Cuantas lbs de habichuelas quieres: "))
-            if cantidad <=0:
-                input ("No se puede ingresar una cantidad negativa, ni tampoco 0. Presione enter para volver al menu: ")
-            else:
-                precio_tot = 80 * cantidad
-                agregar_al_carrito (id,cantidad,precio_tot)
-                vol_agregar = input("¿Quieres ordenar algo mas? ")
-                if vol_agregar == "si":
-                    main(menu)
-                elif vol_agregar != "si":
-                    opc="S"
-                    imprimirfactura(carrito)
-                    print ("Adios")
-        elif opc=="3":
-            id=3
-            cantidad = int(input("Cuantas lbs de aceite quieres: "))
-            if cantidad <=0:
-                input ("No se puede ingresar una cantidad negativa, ni tampoco 0. Presione enter para volver al menu: ")
-            else:
-                precio_tot = 300 * cantidad
-                agregar_al_carrito (id,cantidad,precio_tot)
-                vol_agregar = input("¿Quieres ordenar algo mas? ")
-                if vol_agregar == "si":
-                    main(menu)
-                elif vol_agregar != "si":
-                    opc="S"
-                    imprimirfactura(carrito)
-                    print ("Adios")
-        elif opc=="4":
-            id=4
-            cantidad = int(input("Cuantas lbs de pollo quieres: "))
-            if cantidad <=0:
-                input ("No se puede ingresar una cantidad negativa, ni tampoco 0. Presione enter para volver al menu: ")
-            else:
-                precio_tot = 85 * cantidad
-                agregar_al_carrito (id,cantidad,precio_tot)
-                vol_agregar = input("¿Quieres ordenar algo mas? ")
-                if vol_agregar == "si":
-                    main(menu)
-                elif vol_agregar != "si":
-                    opc="S"
-                    imprimirfactura(carrito)
-                    print ("Adios")
-        elif opc=="5":
-            id=5
-            cantidad = int(input("Cuantas lbs de lechuga quieres: "))
-            if cantidad <=0:
-                input ("No se puede ingresar una cantidad negativa, ni tampoco 0. Presione enter para volver al menu: ")
-            else:
-                precio_tot = 80 * cantidad
-                agregar_al_carrito (id,cantidad,precio_tot)
-                vol_agregar = input("¿Quieres ordenar algo mas? ")
-                if vol_agregar == "si":
-                    main(menu)
-                elif vol_agregar != "si":
-                    opc="S"
-                    imprimirfactura(carrito)
-                    print ("Adios")
-        else:
-            id=int(opc)
-            buscar_producto(id, menu)
+                    break
+        if buscar_producto!=True:
+            print("Producto no encontrado")
+            input ("Presione ENTER para volver al menu")
 main(menu)
