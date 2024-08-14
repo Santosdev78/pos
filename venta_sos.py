@@ -19,11 +19,10 @@ def imprimir_menu(menu):
         print(f'{item['id']}. {item['nombre']} -> RD${item['precio']}')
 
 def buscar_producto(id, menu):
-    for item in menu:
-        if item ["id"]==(id):
+    for producto in menu:
+        if producto['id'] == id:
             return True
-        else:
-            return False
+    return False
 
 def agregar_al_carrito (id,cantidad):
     ag=0
@@ -88,8 +87,8 @@ def main(menu):
         imprimir_menu(menu)
         opc=input("¿Que producto desea agregar? ")
         id = int(opc)
-        buscar_producto(id, menu)
-        if buscar_producto:
+        encontrado=buscar_producto(id, menu)
+        if encontrado==True:
             cantidad = int(input("¿Cuantas lbs quieres? "))
             if cantidad <=0:
                 input ("No se puede ingresar una cantidad negativa, ni tampoco 0. Presione enter para volver al menu: ")
@@ -99,7 +98,7 @@ def main(menu):
                 if volver != "si":
                     imprimirfactura(carrito)
                     break
-        if buscar_producto!=True:
+        else:
             print("Producto no encontrado")
             input ("Presione ENTER para volver al menu")
 main(menu)
