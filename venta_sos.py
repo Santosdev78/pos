@@ -1,5 +1,31 @@
 import os
 
+class Productos:
+    def __init__(self,id,nombre,precio):
+        self.id=id
+        self.nombre=nombre
+        self.precio=precio
+
+    def getid (self):
+        return self.id
+    def getnombre (self):
+        return self.nombre
+    def getprecio (self):
+        return self.precio
+
+class Clientes:
+    def __init__(self,id_cliente, nombre_cliente, fecha):
+        self.id_cliente=id_cliente
+        self.nombre_cliente=nombre_cliente
+        self.fecha=fecha
+        
+    def getidCliente (self):
+        return self.id_cliente
+    def getnombreCliente (self):
+        return self.nombre_cliente
+    def getfecha (self):
+        return self.fecha
+
 menu=[{'id':1, 'nombre':'Arroz', 'precio':50},
       {'id':2, 'nombre':'Habichuelas', 'precio':80},
       {'id':3, 'nombre':'Aceite', 'precio':300},
@@ -20,7 +46,7 @@ def imprimir_menu(menu):
 
 def buscar_producto(id, menu):
     for producto in menu:
-        if producto['id'] == id:
+        if producto['id'] == int(id):
             return True
     return False
 
@@ -69,6 +95,7 @@ def imprimirfactura(carrito):
         tamprecio=1
     else:
         tamprecio-=6
+    print((" "*21)+"Cliente:",(" "*1),"ID")
     print('ID'+' '*(tamid+2)+'Nombre'+' '*(tamnombre+1)+'Precio'+' '*(tamprecio)+(" ")+"Cantidad"+("   ")+"Precio Total")
     for item in carrito:
         print(str(item['id'])+' '*(tamid+4-len(str(item['id'])))+item['nombre']+' '*(tamnombre+7-len(item['nombre']))+str(item['precio'])+(" "*6)+str(item["cantidad"])+(" "*10)+str(item["precio total"]))
