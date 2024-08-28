@@ -1,4 +1,5 @@
 import os
+import json
 
 class Factura:
     def __init__(self,id_sec,nombre_cliente,fecha):
@@ -11,33 +12,21 @@ class Factura:
         return self.nombre_cliente
     def getfecha (self):
         return self.fecha
-
+    
 class Productos:
     def __init__(self,id_p,descripcion,stock,precio_u):
         self.id_p=id_p
-        self.descrpcion=descripcion
+        self.descripcion=descripcion
         self.stock=stock
         self.precio_u=precio_u
-    
     def getidProducto (self):
         return self.id_p
     def getDescripcion (self):
-        return self.descrpcion
+        return self.descripcion
     def getStock (self):
         return self.stock
     def getPrecio (self):
         return self.precio_u
-
-menu=[{'id':1, 'nombre':'Arroz', 'precio':50},
-    {'id':2, 'nombre':'Habichuelas', 'precio':80},
-     {'id':3, 'nombre':'Aceite', 'precio':300},
-     {'id':4, 'nombre':'Pollo', 'precio':85},
-     {'id':5, 'nombre':'Lechuga', 'precio':80},]
-
-carrito=[]
-clientes=[]
-id_sec = 0
-productos=[]
 
 def insertarProductos(id_p,descripcion,stock,precio_u):
     productostemp = Productos (id_p,descripcion,stock,precio_u)
@@ -48,7 +37,9 @@ def insertar_varios_productos(lista_productos):
     id_p, descripcion, stock, precio_u = producto
     insertarProductos(id_p, descripcion, stock, precio_u)
 
-nuevos_productos = [
+productos=[]
+
+opc_productos = [
   (1, "Arroz", 120, 50),
   (2, "Habichuelas", 50, 80),
   (3,"Aceite",80,300),
@@ -56,12 +47,25 @@ nuevos_productos = [
   (5,"Pechuga",35,80)
 ]
 
+carrito=[]
+clientes=[]
+id_sec = 0
+productos=[]
+facturas=[]
+
+menu=[{'id':1, 'nombre':'Arroz', 'precio':50},
+    {'id':2, 'nombre':'Habichuelas', 'precio':80},
+     {'id':3, 'nombre':'Aceite', 'precio':300},
+     {'id':4, 'nombre':'Pollo', 'precio':85},
+     {'id':5, 'nombre':'Lechuga', 'precio':80},]
+
 def imprimir_menu(menu):
     tammax=0
     for item in menu:
         tamactual=len(str(item['id']))+len(item['nombre'])+len(str(item['precio']))
     if tamactual>tammax:
         tammax=tamactual
+    print("BIENVENIDOS A SURTIDORA ITLA")
     print('-'*(int(tammax/2+2))+'Menú'+'-'*(int(tammax/2+2)))
     for item in menu:
         print(f'{item['id']}. {item['nombre']} -> RD${item['precio']}')
@@ -141,7 +145,9 @@ def imprimirfactura(carrito):
     subtotal = 0
     for item in carrito:
         subtotal += item['precio'] * item['cantidad']
+    global impuestos
     impuestos= subtotal*0.18
+    global total
     total=subtotal+impuestos
     print ((" "*2)+' '*(tamid+2)+(" "*6)+' '*(tamnombre+1)+(" "*6)+' '*(tamprecio)+(" ")+"Subtotal"+(" "*2),subtotal,"RD$")
     print ((" "*2)+' '*(tamid+2)+(" "*6)+' '*(tamnombre+1)+(" "*6)+' '*(tamprecio)+(" ")+"Impuesto"+(" "*2),impuestos,"RD$")
@@ -152,6 +158,25 @@ def insertar_cliente ( nombre_cliente,fecha,clientes):
     id_sec+=1
     cliente_temp=Factura( id_sec, nombre_cliente, fecha)
     clientes.append(cliente_temp)
+    
+def agregar_factura(id_sec, nombre, fecha, total, impuestos, productos_factura):
+    factura_temp = {
+        "id": id_sec,
+        "nombre": nombre,
+        "fecha": fecha,
+        "total": total,
+        "impuestos": impuestos,
+        "productos": []
+    }
+    for producto in productos:
+        datos_producto = {
+            "id_p": producto.getidProducto(),
+            "descripcion": producto.getDescripcion(),
+            "stock": producto.getStock(),
+            "precio_u": producto.getPrecio()
+        }
+        factura_temp["productos"].append(datos_producto)
+        facturas.append(factura_temp)
 
 def main(menu):
     while True:
@@ -168,14 +193,21 @@ def main(menu):
                 agregar_al_carrito(id, cantidad)
                 volver = input("¿Deseas añadir algo más?: ")
                 if volver != "si":
+                    global nombre, fecha
                     nombre=input("Nombre: ")
                     fecha=input("Fecha: ")
                     insertar_cliente(nombre,fecha,clientes)
                     imprimirfactura(carrito)
+                    agregar_factura(id_sec, nombre, fecha, total, impuestos,productos)
                     break
         else:
             print("Producto no encontrado")
             input ("Presione ENTER para volver al menu")
 
-insertar_varios_productos(nuevos_productos)
+def guardar_facturas_en_json(archivo):
+    with open(archivo, 'w') as archivo:
+        json.dump(facturas, archivo, indent=4)
+
+insertar_varios_productos(opc_productos)
 main(menu)
+guardar_facturas_en_json("facturasempresas.json")
