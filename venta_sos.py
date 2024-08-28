@@ -1,6 +1,6 @@
 import os
 
-class Cliente:
+class Factura:
     def __init__(self,id_sec,nombre_cliente,fecha):
         self.id_sec=id_sec
         self.nombre_cliente=nombre_cliente
@@ -12,7 +12,21 @@ class Cliente:
     def getfecha (self):
         return self.fecha
 
-
+class Productos:
+    def __init__(self,id_p,descripcion,stock,precio_u):
+        self.id_p=id_p
+        self.descrpcion=descripcion
+        self.stock=stock
+        self.precio_u=precio_u
+    
+    def getidProducto (self):
+        return self.id_p
+    def getDescripcion (self):
+        return self.descrpcion
+    def getStock (self):
+        return self.stock
+    def getPrecio (self):
+        return self.precio_u
 
 menu=[{'id':1, 'nombre':'Arroz', 'precio':50},
     {'id':2, 'nombre':'Habichuelas', 'precio':80},
@@ -23,6 +37,24 @@ menu=[{'id':1, 'nombre':'Arroz', 'precio':50},
 carrito=[]
 clientes=[]
 id_sec = 0
+productos=[]
+
+def insertarProductos(id_p,descripcion,stock,precio_u):
+    productostemp = Productos (id_p,descripcion,stock,precio_u)
+    productos.append(productostemp)
+
+def insertar_varios_productos(lista_productos):
+  for producto in lista_productos:
+    id_p, descripcion, stock, precio_u = producto
+    insertarProductos(id_p, descripcion, stock, precio_u)
+
+nuevos_productos = [
+  (1, "Arroz", 120, 50),
+  (2, "Habichuelas", 50, 80),
+  (3,"Aceite",80,300),
+  (4,"Pollo",100,85),
+  (5,"Pechuga",35,80)
+]
 
 def imprimir_menu(menu):
     tammax=0
@@ -34,14 +66,22 @@ def imprimir_menu(menu):
     for item in menu:
         print(f'{item['id']}. {item['nombre']} -> RD${item['precio']}')
 
-def buscar_producto(id,menu):
-    for producto in menu:
-        if producto["id"] == int(id):
+def buscar_producto(id, productos):
+    for producto in productos:
+        if producto.getidProducto() == int(id):
             return True
     return False
 
 def agregar_al_carrito (id,cantidad):
     ag=0
+    for producto in productos:
+        if producto.getidProducto() == id:  
+            if producto.getStock() >= cantidad:
+                producto_temporal = producto
+                producto_temporal.stock -= cantidad
+            else:
+                print("No hay suficiente stock para este producto.")
+                ag=1
     for item in carrito:
         if item['id'] == id:
             item['cantidad'] += cantidad
@@ -110,7 +150,7 @@ def imprimirfactura(carrito):
 def insertar_cliente ( nombre_cliente,fecha,clientes):
     global id_sec
     id_sec+=1
-    cliente_temp=Cliente( id_sec, nombre_cliente, fecha)
+    cliente_temp=Factura( id_sec, nombre_cliente, fecha)
     clientes.append(cliente_temp)
 
 def main(menu):
@@ -119,7 +159,7 @@ def main(menu):
         imprimir_menu(menu)
         opc=input("¿Que producto desea agregar? ")
         id = int(opc)
-        encontrado=buscar_producto(id, menu)
+        encontrado=buscar_producto(id, productos)
         if encontrado==True:
             cantidad = int(input("¿Cuantas lbs quieres? "))
             if cantidad <=0:
@@ -136,4 +176,6 @@ def main(menu):
         else:
             print("Producto no encontrado")
             input ("Presione ENTER para volver al menu")
+
+insertar_varios_productos(nuevos_productos)
 main(menu)
